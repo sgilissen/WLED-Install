@@ -1,1 +1,232 @@
+name: WLED compile
 
+on:
+    workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.9
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+    - name: Install PlatformIO
+      run: |
+        python -m pip install --upgrade pip
+        pip install --upgrade platformio
+        git rm -r $GITHUB_WORKSPACE/*.bin || true
+    - name: Run PlatformIO mdev esp8266_2m
+      run: |
+        rm -rf /tmp/WLEDtemp/* || true
+        mkdir -p /tmp/WLEDtemp
+        wget https://github.com/moonmodules/WLED/archive/refs/heads/mdev.zip -O /tmp/WLEDtemp/mm.zip
+        unzip -o /tmp/WLEDtemp/mm.zip -d /tmp/WLEDtemp
+        find /tmp/WLEDtemp -maxdepth 1 -name "WLED-*" -type d >> /tmp/WLEDtemp/wledfoldername
+        cd `cat /tmp/WLEDtemp/wledfoldername`
+        npm install
+        echo '[env:custom_build]' >>platformio.ini
+        echo 'extends = env:esp8266_2m' >>platformio.ini
+        echo 'build_flags = ${env:esp8266_2m.build_flags} -D WLED_ENABLE_DMX -D WLED_AP_SSID_UNIQUE -D WLED_DISABLE_ALEXA' >>platformio.ini
+        
+        echo 'build_unflags= -D WLED_RELEASE_NAME' >>platformio.ini
+        pio run -e custom_build || pio run -e custom_build || true
+    - name: Copy Files mdev esp8266_2m
+      run: |
+        cd $GITHUB_WORKSPACE
+        WLEDFOLDERNAME=`cat /tmp/WLEDtemp/wledfoldername`
+        cp ${WLEDFOLDERNAME}/build_output/firmware/custom_build.bin $GITHUB_WORKSPACE/build_mdev_esp8266_2m.bin || true
+        date -I | tr -d '\n' >$GITHUB_WORKSPACE/last_update_date.txt
+    - name: Commit Files mdev esp8266_2m
+      run: |
+        cd $GITHUB_WORKSPACE
+        git config user.name "GitHub Actions Bot"
+        git config user.email "<>"
+        git add $GITHUB_WORKSPACE/build_mdev_esp8266_2m.bin || true
+        git add $GITHUB_WORKSPACE/last_update_date.txt || true
+        git commit -m "Commit Custom Build" || true
+        git push origin main || true
+    - name: Run PlatformIO mdev esp32dev_V4_dio80
+      run: |
+        rm -rf /tmp/WLEDtemp/* || true
+        mkdir -p /tmp/WLEDtemp
+        wget https://github.com/moonmodules/WLED/archive/refs/heads/mdev.zip -O /tmp/WLEDtemp/mm.zip
+        unzip -o /tmp/WLEDtemp/mm.zip -d /tmp/WLEDtemp
+        find /tmp/WLEDtemp -maxdepth 1 -name "WLED-*" -type d >> /tmp/WLEDtemp/wledfoldername
+        cd `cat /tmp/WLEDtemp/wledfoldername`
+        npm install
+        echo '[env:custom_build]' >>platformio.ini
+        echo 'extends = env:esp32dev_V4_dio80' >>platformio.ini
+        echo 'build_flags = ${env:esp32dev_V4_dio80.build_flags} -D WLED_ENABLE_DMX -D WLED_AP_SSID_UNIQUE -D WLED_DISABLE_ALEXA' >>platformio.ini
+        
+        echo 'build_unflags= -D WLED_RELEASE_NAME' >>platformio.ini
+        pio run -e custom_build || pio run -e custom_build || true
+    - name: Copy Files mdev esp32dev_V4_dio80
+      run: |
+        cd $GITHUB_WORKSPACE
+        WLEDFOLDERNAME=`cat /tmp/WLEDtemp/wledfoldername`
+        cp ${WLEDFOLDERNAME}/build_output/firmware/custom_build.bin $GITHUB_WORKSPACE/build_mdev_esp32dev_V4_dio80.bin || true
+        date -I | tr -d '\n' >$GITHUB_WORKSPACE/last_update_date.txt
+    - name: Commit Files mdev esp32dev_V4_dio80
+      run: |
+        cd $GITHUB_WORKSPACE
+        git config user.name "GitHub Actions Bot"
+        git config user.email "<>"
+        git add $GITHUB_WORKSPACE/build_mdev_esp32dev_V4_dio80.bin || true
+        git add $GITHUB_WORKSPACE/last_update_date.txt || true
+        git commit -m "Commit Custom Build" || true
+        git push origin main || true
+    - name: Run PlatformIO mdev esp32_4MB_S
+      run: |
+        rm -rf /tmp/WLEDtemp/* || true
+        mkdir -p /tmp/WLEDtemp
+        wget https://github.com/moonmodules/WLED/archive/refs/heads/mdev.zip -O /tmp/WLEDtemp/mm.zip
+        unzip -o /tmp/WLEDtemp/mm.zip -d /tmp/WLEDtemp
+        find /tmp/WLEDtemp -maxdepth 1 -name "WLED-*" -type d >> /tmp/WLEDtemp/wledfoldername
+        cd `cat /tmp/WLEDtemp/wledfoldername`
+        npm install
+        echo '[env:custom_build]' >>platformio.ini
+        echo 'extends = env:esp32_4MB_S' >>platformio.ini
+        echo 'build_flags = ${env:esp32_4MB_S.build_flags} -D WLED_ENABLE_DMX -D WLED_AP_SSID_UNIQUE -D WLED_DISABLE_ALEXA' >>platformio.ini
+        
+        echo 'build_unflags= -D WLED_RELEASE_NAME' >>platformio.ini
+        pio run -e custom_build || pio run -e custom_build || true
+    - name: Copy Files mdev esp32_4MB_S
+      run: |
+        cd $GITHUB_WORKSPACE
+        WLEDFOLDERNAME=`cat /tmp/WLEDtemp/wledfoldername`
+        cp ${WLEDFOLDERNAME}/build_output/firmware/custom_build.bin $GITHUB_WORKSPACE/build_mdev_esp32_4MB_S.bin || true
+        date -I | tr -d '\n' >$GITHUB_WORKSPACE/last_update_date.txt
+    - name: Commit Files mdev esp32_4MB_S
+      run: |
+        cd $GITHUB_WORKSPACE
+        git config user.name "GitHub Actions Bot"
+        git config user.email "<>"
+        git add $GITHUB_WORKSPACE/build_mdev_esp32_4MB_S.bin || true
+        git add $GITHUB_WORKSPACE/last_update_date.txt || true
+        git commit -m "Commit Custom Build" || true
+        git push origin main || true
+    - name: Run PlatformIO mdev esp8266_2MB_S
+      run: |
+        rm -rf /tmp/WLEDtemp/* || true
+        mkdir -p /tmp/WLEDtemp
+        wget https://github.com/moonmodules/WLED/archive/refs/heads/mdev.zip -O /tmp/WLEDtemp/mm.zip
+        unzip -o /tmp/WLEDtemp/mm.zip -d /tmp/WLEDtemp
+        find /tmp/WLEDtemp -maxdepth 1 -name "WLED-*" -type d >> /tmp/WLEDtemp/wledfoldername
+        cd `cat /tmp/WLEDtemp/wledfoldername`
+        npm install
+        echo '[env:custom_build]' >>platformio.ini
+        echo 'extends = env:esp8266_2MB_S' >>platformio.ini
+        echo 'build_flags = ${env:esp8266_2MB_S.build_flags} -D WLED_ENABLE_DMX -D WLED_AP_SSID_UNIQUE -D WLED_DISABLE_ALEXA' >>platformio.ini
+        
+        echo 'build_unflags= -D WLED_RELEASE_NAME' >>platformio.ini
+        pio run -e custom_build || pio run -e custom_build || true
+    - name: Copy Files mdev esp8266_2MB_S
+      run: |
+        cd $GITHUB_WORKSPACE
+        WLEDFOLDERNAME=`cat /tmp/WLEDtemp/wledfoldername`
+        cp ${WLEDFOLDERNAME}/build_output/firmware/custom_build.bin $GITHUB_WORKSPACE/build_mdev_esp8266_2MB_S.bin || true
+        date -I | tr -d '\n' >$GITHUB_WORKSPACE/last_update_date.txt
+    - name: Commit Files mdev esp8266_2MB_S
+      run: |
+        cd $GITHUB_WORKSPACE
+        git config user.name "GitHub Actions Bot"
+        git config user.email "<>"
+        git add $GITHUB_WORKSPACE/build_mdev_esp8266_2MB_S.bin || true
+        git add $GITHUB_WORKSPACE/last_update_date.txt || true
+        git commit -m "Commit Custom Build" || true
+        git push origin main || true
+    - name: Run PlatformIO mdev esp01_1MB_S
+      run: |
+        rm -rf /tmp/WLEDtemp/* || true
+        mkdir -p /tmp/WLEDtemp
+        wget https://github.com/moonmodules/WLED/archive/refs/heads/mdev.zip -O /tmp/WLEDtemp/mm.zip
+        unzip -o /tmp/WLEDtemp/mm.zip -d /tmp/WLEDtemp
+        find /tmp/WLEDtemp -maxdepth 1 -name "WLED-*" -type d >> /tmp/WLEDtemp/wledfoldername
+        cd `cat /tmp/WLEDtemp/wledfoldername`
+        npm install
+        echo '[env:custom_build]' >>platformio.ini
+        echo 'extends = env:esp01_1MB_S' >>platformio.ini
+        echo 'build_flags = ${env:esp01_1MB_S.build_flags} -D WLED_ENABLE_DMX -D WLED_AP_SSID_UNIQUE -D WLED_DISABLE_ALEXA' >>platformio.ini
+        
+        echo 'build_unflags= -D WLED_RELEASE_NAME' >>platformio.ini
+        pio run -e custom_build || pio run -e custom_build || true
+    - name: Copy Files mdev esp01_1MB_S
+      run: |
+        cd $GITHUB_WORKSPACE
+        WLEDFOLDERNAME=`cat /tmp/WLEDtemp/wledfoldername`
+        cp ${WLEDFOLDERNAME}/build_output/firmware/custom_build.bin $GITHUB_WORKSPACE/build_mdev_esp01_1MB_S.bin || true
+        date -I | tr -d '\n' >$GITHUB_WORKSPACE/last_update_date.txt
+    - name: Commit Files mdev esp01_1MB_S
+      run: |
+        cd $GITHUB_WORKSPACE
+        git config user.name "GitHub Actions Bot"
+        git config user.email "<>"
+        git add $GITHUB_WORKSPACE/build_mdev_esp01_1MB_S.bin || true
+        git add $GITHUB_WORKSPACE/last_update_date.txt || true
+        git commit -m "Commit Custom Build" || true
+        git push origin main || true
+    - name: Run PlatformIO mdev esp32_4MB_V4_S
+      run: |
+        rm -rf /tmp/WLEDtemp/* || true
+        mkdir -p /tmp/WLEDtemp
+        wget https://github.com/moonmodules/WLED/archive/refs/heads/mdev.zip -O /tmp/WLEDtemp/mm.zip
+        unzip -o /tmp/WLEDtemp/mm.zip -d /tmp/WLEDtemp
+        find /tmp/WLEDtemp -maxdepth 1 -name "WLED-*" -type d >> /tmp/WLEDtemp/wledfoldername
+        cd `cat /tmp/WLEDtemp/wledfoldername`
+        npm install
+        echo '[env:custom_build]' >>platformio.ini
+        echo 'extends = env:esp32_4MB_V4_S' >>platformio.ini
+        echo 'build_flags = ${env:esp32_4MB_V4_S.build_flags} -D WLED_ENABLE_DMX -D WLED_AP_SSID_UNIQUE -D WLED_DISABLE_ALEXA' >>platformio.ini
+        
+        echo 'build_unflags= -D WLED_RELEASE_NAME' >>platformio.ini
+        pio run -e custom_build || pio run -e custom_build || true
+    - name: Copy Files mdev esp32_4MB_V4_S
+      run: |
+        cd $GITHUB_WORKSPACE
+        WLEDFOLDERNAME=`cat /tmp/WLEDtemp/wledfoldername`
+        cp ${WLEDFOLDERNAME}/build_output/firmware/custom_build.bin $GITHUB_WORKSPACE/build_mdev_esp32_4MB_V4_S.bin || true
+        date -I | tr -d '\n' >$GITHUB_WORKSPACE/last_update_date.txt
+    - name: Commit Files mdev esp32_4MB_V4_S
+      run: |
+        cd $GITHUB_WORKSPACE
+        git config user.name "GitHub Actions Bot"
+        git config user.email "<>"
+        git add $GITHUB_WORKSPACE/build_mdev_esp32_4MB_V4_S.bin || true
+        git add $GITHUB_WORKSPACE/last_update_date.txt || true
+        git commit -m "Commit Custom Build" || true
+        git push origin main || true
+    - name: Run PlatformIO mdev esp32_4MB_V4_M
+      run: |
+        rm -rf /tmp/WLEDtemp/* || true
+        mkdir -p /tmp/WLEDtemp
+        wget https://github.com/moonmodules/WLED/archive/refs/heads/mdev.zip -O /tmp/WLEDtemp/mm.zip
+        unzip -o /tmp/WLEDtemp/mm.zip -d /tmp/WLEDtemp
+        find /tmp/WLEDtemp -maxdepth 1 -name "WLED-*" -type d >> /tmp/WLEDtemp/wledfoldername
+        cd `cat /tmp/WLEDtemp/wledfoldername`
+        npm install
+        echo '[env:custom_build]' >>platformio.ini
+        echo 'extends = env:esp32_4MB_V4_M' >>platformio.ini
+        echo 'build_flags = ${env:esp32_4MB_V4_M.build_flags} -D WLED_ENABLE_DMX -D WLED_AP_SSID_UNIQUE -D WLED_DISABLE_ALEXA' >>platformio.ini
+        
+        echo 'build_unflags= -D WLED_RELEASE_NAME' >>platformio.ini
+        pio run -e custom_build || pio run -e custom_build || true
+    - name: Copy Files mdev esp32_4MB_V4_M
+      run: |
+        cd $GITHUB_WORKSPACE
+        WLEDFOLDERNAME=`cat /tmp/WLEDtemp/wledfoldername`
+        cp ${WLEDFOLDERNAME}/build_output/firmware/custom_build.bin $GITHUB_WORKSPACE/build_mdev_esp32_4MB_V4_M.bin || true
+        date -I | tr -d '\n' >$GITHUB_WORKSPACE/last_update_date.txt
+    - name: Commit Files mdev esp32_4MB_V4_M
+      run: |
+        cd $GITHUB_WORKSPACE
+        git config user.name "GitHub Actions Bot"
+        git config user.email "<>"
+        git add $GITHUB_WORKSPACE/build_mdev_esp32_4MB_V4_M.bin || true
+        git add $GITHUB_WORKSPACE/last_update_date.txt || true
+        git commit -m "Commit Custom Build" || true
+        git push origin main || true
